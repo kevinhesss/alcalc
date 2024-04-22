@@ -107,122 +107,133 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Alcalc Converter'))),
       body: Container(
         color: Colors.blue,
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('How many',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return _drinkNames.where((String name) {
-                    return name
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                onSelected: (String selection) {
-                  setState(() {
-                    _outputType =
-                        selection; // Assuming this is for the output type
-                  });
-                  fetchABVs();
-                  calculateResult();
-                },
-                fieldViewBuilder: (context, textEditingController, focusNode,
-                    onFieldSubmitted) {
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      hintText: "Shots of Aubrey's Gin", // Your hint text here
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    ),
-                    textAlign: TextAlign.center,
-                    onFieldSubmitted: (String value) {
-                      onFieldSubmitted();
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: 20),
-              Text('Are in',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    _enteredAmount = double.tryParse(value);
-                  });
-                  calculateResult();
-                },
-                decoration: InputDecoration(
-                  hintText: 'Amount',
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
                 ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 20),
-              Text('of',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return _drinkNames.where((String name) {
-                    return name
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                onSelected: (String selection) {
-                  setState(() {
-                    _inputType =
-                        selection; // Assuming this is for the output type
-                  });
-                  fetchABVs();
-                  calculateResult();
-                },
-                fieldViewBuilder: (context, textEditingController, focusNode,
-                    onFieldSubmitted) {
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      hintText: "Shots of Aubrey's Gin",
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    ),
-                    textAlign: TextAlign.center,
-                    onFieldSubmitted: (String value) {
-                      onFieldSubmitted();
-                    },
-                  );
-                },
-              ),
-              SizedBox(height: 20),
-              if (_result != null)
-                Text(
-                  '$_result',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('How many',
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                SizedBox(height: 20),
+                Autocomplete<String>(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return _drinkNames.where((String name) {
+                      return name
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  onSelected: (String selection) {
+                    setState(() {
+                      _outputType = selection;
+                    });
+                    fetchABVs();
+                    calculateResult();
+                  },
+                  fieldViewBuilder: (context, textEditingController, focusNode,
+                      onFieldSubmitted) {
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        hintText: "Shots of Aubrey's Gin",
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      textAlign: TextAlign.center,
+                      onFieldSubmitted: (String value) {
+                        onFieldSubmitted();
+                      },
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                Text('Are in',
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      _enteredAmount = double.tryParse(value);
+                    });
+                    calculateResult();
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Amount',
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                   ),
                   textAlign: TextAlign.center,
                 ),
-              SizedBox(height: 20),
-            ],
+                SizedBox(height: 20),
+                Autocomplete<String>(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return _drinkNames.where((String name) {
+                      return name
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  onSelected: (String selection) {
+                    setState(() {
+                      _inputType = selection;
+                    });
+                    fetchABVs();
+                    calculateResult();
+                  },
+                  fieldViewBuilder: (context, textEditingController, focusNode,
+                      onFieldSubmitted) {
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        hintText: "Shots of Aubrey's Gin",
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      textAlign: TextAlign.center,
+                      onFieldSubmitted: (String value) {
+                        onFieldSubmitted();
+                      },
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                if (_result != null)
+                  Text(
+                    '$_result',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
