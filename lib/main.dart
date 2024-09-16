@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'drinkFormPage.dart'; // Import the drink form page
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
-        apiKey: "AIzaSyBbICdxeKThIaITQuTGK-NrubtwzyYjoPo",
-        authDomain: "alculator-ee2b5.firebaseapp.com",
-        projectId: "alculator-ee2b5",
-        storageBucket: "alculator-ee2b5.appspot.com",
-        messagingSenderId: "688366562269",
-        appId: "1:688366562269:web:6b9e4906a2760318f92434",
-        measurementId: "G-9CQXPPBN4N"),
+      apiKey: "AIzaSyBbICdxeKThIaITQuTGK-NrubtwzyYjoPo",
+      authDomain: "alculator-ee2b5.firebaseapp.com",
+      projectId: "alculator-ee2b5",
+      storageBucket: "alculator-ee2b5.appspot.com",
+      messagingSenderId: "688366562269",
+      appId: "1:688366562269:web:6b9e4906a2760318f92434",
+      measurementId: "G-9CQXPPBN4N",
+    ),
   );
   runApp(MyApp());
 }
@@ -33,9 +35,8 @@ class AlcoholCalculator extends StatefulWidget {
 }
 
 class _AlcoholCalculatorState extends State<AlcoholCalculator> {
-  /// Define Variables
-  String? _inputType = "Shots of Aubrey's Gin";
-  String? _outputType = "Shots of Aubrey's Gin";
+  String? _inputType = "Search for Input Drink Name";
+  String? _outputType = "Search for Output Drink Name";
   double? _inputABV;
   double? _outputABV;
   String? _result;
@@ -46,15 +47,12 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-
-  /// Initialize the State???
   void initState() {
     super.initState();
     fetchABVs();
     fetchDrinkNames();
   }
 
-  /// Get Names From Firebase For Dropdowns
   Future<void> fetchDrinkNames() async {
     QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('Dranks').get();
@@ -65,7 +63,6 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
     });
   }
 
-  /// Get Data From Firebase
   Future<void> fetchABVs() async {
     final inputTypeDoc = await FirebaseFirestore.instance
         .collection('Dranks')
@@ -79,31 +76,23 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
 
     if (inputTypeDoc.docs.isNotEmpty) {
       final data = inputTypeDoc.docs.first.data();
-      if (data != null) {
-        setState(() {
-          _inputABV = (data['ABV'] as num).toDouble();
-          _inputAmountInOz = (data['amount'] as num).toDouble();
-        });
-      }
+      setState(() {
+        _inputABV = (data['ABV'] as num).toDouble();
+        _inputAmountInOz = (data['amount'] as num).toDouble();
+      });
     }
 
     if (outputTypeDoc.docs.isNotEmpty) {
       final data = outputTypeDoc.docs.first.data();
-      if (data != null) {
-        setState(() {
-          _outputABV = (data['ABV'] as num).toDouble();
-          _outputAmountInOz = (data['amount'] as num).toDouble();
-
-          ///print("/ / / / / / / / /fetchABVS: OutputABV : $_outputABV  OutputAmtInOZ : $_outputAmountInOz");
-
-        });
-      }
+      setState(() {
+        _outputABV = (data['ABV'] as num).toDouble();
+        _outputAmountInOz = (data['amount'] as num).toDouble();
+      });
     }
 
     calculateResult();
   }
 
-  /// Calculate Output
   void calculateResult() {
     if (_enteredAmount != null &&
         _inputABV != null &&
@@ -111,7 +100,8 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
         _inputAmountInOz != null &&
         _outputAmountInOz != null) {
       double outputtedNumber =
-          (_enteredAmount! * _inputAmountInOz! * _inputABV!) / (_outputAmountInOz! * _outputABV!);
+          (_enteredAmount! * _inputAmountInOz! * _inputABV!) /
+              (_outputAmountInOz! * _outputABV!);
       setState(() {
         _result =
             'There is the equivalent of ${outputtedNumber.toStringAsFixed(2)} $_outputType in $_enteredAmount $_inputType';
@@ -148,15 +138,10 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 80),
-
-                  ///"How Many"
                   Text('How many',
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-
                   SizedBox(height: 20),
-
-                  ///Output Drink Type Field
                   Autocomplete<String>(
                     optionsBuilder: (TextEditingValue textEditingValue) {
                       return _drinkNames.where((String name) {
@@ -178,21 +163,9 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                         controller: textEditingController,
                         focusNode: focusNode,
                         decoration: InputDecoration(
-                          hintText: "Shots of Aubrey's Gin",
+                          hintText: "Search for Input Drink Name",
                           contentPadding: EdgeInsets.symmetric(vertical: 10),
                         ),
-                        onTap: () {
-                          textEditingController.selection = TextSelection(
-                            baseOffset: 0,
-                            extentOffset:
-                                textEditingController.value.text.length,
-                          );
-                          _scrollController.animateTo(
-                            150.0,
-                            duration: Duration(milliseconds: 100),
-                            curve: Curves.easeInOut,
-                          );
-                        },
                         textAlign: TextAlign.center,
                         onFieldSubmitted: (String value) {
                           fetchABVs();
@@ -202,30 +175,17 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                       );
                     },
                   ),
-
                   SizedBox(height: 20),
-
-                  ///"Are In"
                   Text('Are in',
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.bold)),
-
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   SizedBox(height: 20),
-
-                  ///Input Drink Number Field
                   TextFormField(
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                     onChanged: (value) {
                       if (value.isNotEmpty) {
-                        double? enteredAmount;
-                        if (value.contains('.')) {
-                          enteredAmount = double.tryParse(value);
-                        } else {
-                          enteredAmount = int.tryParse(value)?.toDouble();
-                        }
+                        double? enteredAmount = double.tryParse(value);
                         if (enteredAmount != null) {
                           setState(() {
                             _enteredAmount = enteredAmount;
@@ -241,10 +201,7 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-
                   SizedBox(height: 20),
-
-                  /// Input Drink Type Field
                   Autocomplete<String>(
                     optionsBuilder: (TextEditingValue textEditingValue) {
                       return _drinkNames.where((String name) {
@@ -266,21 +223,9 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                         controller: textEditingController,
                         focusNode: focusNode,
                         decoration: InputDecoration(
-                          hintText: "Shots of Aubrey's Gin",
+                          hintText: "Search for Output Drink Name",
                           contentPadding: EdgeInsets.symmetric(vertical: 10),
                         ),
-                        onTap: () {
-                          textEditingController.selection = TextSelection(
-                            baseOffset: 0,
-                            extentOffset:
-                                textEditingController.value.text.length,
-                          );
-                          _scrollController.animateTo(
-                            250.0,
-                            duration: Duration(milliseconds: 100),
-                            curve: Curves.easeInOut,
-                          );
-                        },
                         textAlign: TextAlign.center,
                         onFieldSubmitted: (String value) {
                           fetchABVs();
@@ -290,10 +235,7 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                       );
                     },
                   ),
-
                   SizedBox(height: 20),
-
-                  /// Make Output Text
                   if (_result != null)
                     Text(
                       '$_result',
@@ -304,12 +246,28 @@ class _AlcoholCalculatorState extends State<AlcoholCalculator> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                  SizedBox(height: 40), // Add some spacing before the button
                 ],
               ),
             ),
           ),
         ),
       ),
+      floatingActionButton: Container(
+          child: ElevatedButton(
+            style: ButtonStyle(elevation: WidgetStateProperty.all(7)),
+            onPressed: () {
+              // Navigate to DrinkFormPage
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DrinkFormPage()),
+              );
+            },
+            child: Text("Suggest a New Drink"),
+          ),
+        ),
+      // ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
